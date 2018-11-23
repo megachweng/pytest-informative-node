@@ -214,3 +214,7 @@ def test_package_level(testdir):
         'package2*module2*top_level_function_parametrized*one** PASSED*',
         'package2*module2*top_level_function_parametrized*two** PASSED*',
     ])
+
+
+if __name__ == '__main__':
+    pytest.main()
