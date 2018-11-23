@@ -85,4 +85,4 @@ Distributed under the terms of the [MIT](http://opensource.org/licenses/MIT) lic
 [coverage]:https://codecov.io/gh/megachweng/pytest-informative-node/branch/master/graph/badge.svg
 [pypi]:https://img.shields.io/pypi/v/pytest-informative-node.svg
 [python version]:https://img.shields.io/pypi/pyversions/pytest-informative-node.svg
-[ci]:https://travis-ci.org/megachweng/pytest-informative-node.svg?branch=master
+[ci]:https://travis-ci.com/megachweng/pytest-informative-node.svg?branch=master
