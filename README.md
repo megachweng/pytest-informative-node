@@ -1,6 +1,10 @@
 # Welcome to pytest-informative-node
-![PyPi version][pypi] ![Python version][python version] ![ci][ci] ![code coverage][coverage]  
-display more node information.
+[![PyPi version](https://img.shields.io/pypi/v/pytest-informative-node.svg)](https://pypi.org/project/pytest-informative-node/)
+![Python version](https://img.shields.io/pypi/pyversions/pytest-informative-node.svg)
+[![Build Status](https://travis-ci.com/megachweng/pytest-informative-node.svg?branch=master)](https://travis-ci.com/megachweng/pytest-informative-node)
+[![codecov](https://codecov.io/gh/megachweng/pytest-informative-node/branch/master/graph/badge.svg)](https://codecov.io/gh/megachweng/pytest-informative-node)  
+
+Display more node information.
 
 ## Requirements
 * pytest >= 3.10.0
@@ -71,6 +75,14 @@ scenario
             |__ ✕second
 
 ```
+>**Notice:** Duplicate custom node id under same test level is not allowed.  
+e.g.
+```python
+def test_a():
+    """@ login"""
+def test_b():
+    """@ login""" # <-----XXXXXX!
+```
 ## Contributing
 Contributions are very welcome. Tests can be run with [tox](https://tox.readthedocs.io/en/latest/), please ensure
 the coverage at least stays the same before you submit a pull request.
@@ -81,8 +93,3 @@ Distributed under the terms of the [MIT](http://opensource.org/licenses/MIT) lic
 
 ## Known Issue
 * If you test with Pycharm, you cannot navigate back to source test file from Test Runner tab.
-
-[coverage]:https://codecov.io/gh/megachweng/pytest-informative-node/branch/master/graph/badge.svg
-[pypi]:https://img.shields.io/pypi/v/pytest-informative-node.svg
-[python version]:https://img.shields.io/pypi/pyversions/pytest-informative-node.svg
-[ci]:https://travis-ci.com/megachweng/pytest-informative-node.svg?branch=masterravis-ci.org/megachweng/pytest-informative-node.svg?branch=master
