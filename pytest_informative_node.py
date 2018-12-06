@@ -89,7 +89,7 @@ class InformativeNode:
 
                 if t in (Function, Class):
                     parts.append((
-                        determiner(test_item.obj.__doc__, self.config.delimiter) or test_item.name,
+                        determiner(test_item.obj.__doc__, self.config.delimiter) or getattr(test_item, 'originalname', test_item.name),
                         False
                     ))
                     traverse(test_item.parent)

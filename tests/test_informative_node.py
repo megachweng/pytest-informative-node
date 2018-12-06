@@ -152,6 +152,15 @@ def test_package_level(testdir):
             @pytest.mark.parametrize('number',[1,2],ids=['one','two'])
             def test_b(number):
                 """@top_level_function_parametrized"""
+                assert 1            
+            
+            @pytest.mark.parametrize('number',[1,2],ids=['one','two'])
+            def test_no_custom_nodeid(number):
+                assert 1            
+            
+            @pytest.mark.parametrize('number',[1,2],ids=['one','two'])
+            def test_chinese(number):
+                """@中文"""
                 assert 1
             ''')
 
@@ -210,6 +219,10 @@ def test_package_level(testdir):
         'package2*module2*cls_2*method_b* PASSED*',
         'package2*module2*cls_3*method_parametrized*one* PASSED*',
         'package2*module2*cls_3*method_parametrized*two* PASSED*',
+        'package2*module2*test_no_custom_nodeid*one* PASSED*',
+        'package2*module2*test_no_custom_nodeid*two* PASSED*',
+        'package2*module2*中文*one* PASSED*',
+        'package2*module2*中文*two* PASSED*',
         'package2*module2*top_level_function* PASSED*',
         'package2*module2*top_level_function_parametrized*one** PASSED*',
         'package2*module2*top_level_function_parametrized*two** PASSED*',

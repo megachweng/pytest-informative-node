@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name='pytest-informative-node',
-    version='0.1.1',
+    version='0.2.1',
     author='megachweng',
     author_email='megachweng@gmail.com',
     maintainer='megachweng',
