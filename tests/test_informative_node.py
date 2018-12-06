@@ -11,7 +11,7 @@ def test_no_ini_config(testdir):
                 assert 1
             ''')
     result = testdir.runpytest('-v')
-    result.stdout.fnmatch_lines(['*::test_node_id* PASSED*'])
+    result.stdout.fnmatch_lines_random(['*::test_node_id* PASSED*'])
 
 
 @pytest.mark.parametrize('delimiter', [' ', '*', '!@'], ids=['empty', '*', '!@'])
@@ -33,9 +33,9 @@ def test_node_id_delimiter_and_switch(delimiter, switch, testdir):
         ''')
     result = testdir.runpytest('-v')
     if switch == 'true':
-        result.stdout.fnmatch_lines(['*::custom_nodeid* PASSED*'])
+        result.stdout.fnmatch_lines_random(['*::custom_nodeid* PASSED*'])
     else:
-        result.stdout.fnmatch_lines(['*::test_node_id* PASSED*'])
+        result.stdout.fnmatch_lines_random(['*::test_node_id* PASSED*'])
 
 
 def test_package_level(testdir):
@@ -187,7 +187,7 @@ def test_package_level(testdir):
     os.rename('test_module_four.py', 'my_package_four/test_module_four.py')
     result = testdir.runpytest('-v')
 
-    result.stdout.fnmatch_lines([
+    result.stdout.fnmatch_lines_random([
         'my_package_four*module4*cls_1*method_a* PASSED*',
         'my_package_four*module4*cls_1*method_b* PASSED*',
         'package1*module1*cls_1*method_a* PASSED*',
@@ -213,6 +213,44 @@ def test_package_level(testdir):
         'package2*module2*top_level_function* PASSED*',
         'package2*module2*top_level_function_parametrized*one** PASSED*',
         'package2*module2*top_level_function_parametrized*two** PASSED*',
+    ])
+
+
+def test_package_without_init_file(testdir):
+    testdir.makeini(f"""
+        [pytest]
+        [informative_node_id]
+        enable    : true
+        """)
+    testdir.mkpydir('my_dir_top')
+    testdir.mkpydir('my_dir_top/my_dir_sub')
+    testdir.makepyfile(test_module='''
+            """@custom_module"""
+            class TestCls_one:
+                """@ cls_1"""
+                def test_a(self):
+                    """@method_a"""
+                    assert 1
+                def test_b(self):
+                    """@method_b"""
+                    assert 1
+
+            class TestCls_two:
+                """@ cls_2"""
+                def test_a(self):
+                    """@method_a"""
+                    assert 1
+                def test_b(self):
+                    """@method_b"""
+                    assert 1
+            ''')
+    os.rename('test_module.py', 'my_dir_top/my_dir_sub/test_module.py')
+    result = testdir.runpytest('-v')
+    result.stdout.fnmatch_lines_random([
+        '*my_dir_top*my_dir_sub*custom_module*cls_1*method_a*',
+        '*my_dir_top*my_dir_sub*custom_module*cls_1*method_b*',
+        '*my_dir_top*my_dir_sub*custom_module*cls_2*method_a*',
+        '*my_dir_top*my_dir_sub*custom_module*cls_2*method_b*',
     ])
 
 
