@@ -30,8 +30,17 @@ class Section:
 def determiner(docstring, delimiter):
     if docstring:
         lines = [line.strip() for line in docstring.splitlines() if line.strip() != '']
-        if lines[0].startswith(delimiter):
-            return lines[0][len(delimiter):].strip()
+        regex = f'''\\s*{re.escape(delimiter)}\\s*(.*)'''
+        group = re.search(regex, lines[0])
+        if group:
+            return group.group(1)
+
+
+def search(docstring, delimiter):
+    regex = f'''(^\\"{{3}}\\s*\\s*|^\\'{{3}})\\s*{re.escape(delimiter)}\\s*(.*)(\\"{{3}}$|\\'{{3}}$)'''
+    docstring = re.search(regex, docstring)
+    if docstring:
+        return docstring.group(2)
     return None
 
 
@@ -54,6 +63,7 @@ class InformativeNode:
         parts = []
 
         def package_traverse(test_item):
+            nonlocal parts
             parents = Path(test_item.fspath).parents
             for i in parents:
                 if i == Path.cwd():
@@ -63,9 +73,9 @@ class InformativeNode:
                     for init_file in files:
                         with open(init_file) as fp:
                             line = fp.readline()
-                            docstring = re.search('''(^\"{3}\s*@\s*|^'{3}\s*@\s*)(.*)(\"{3}$|'{3}$)''', line)
+                            docstring = search(line, self.config.delimiter)
                             if docstring:
-                                parts.append((docstring.group(2), True))
+                                parts.append((docstring, True))
                             else:
                                 parts.append((i.name, True))
 
@@ -79,9 +89,7 @@ class InformativeNode:
 
                 if t in (Function, Class):
                     parts.append((
-                        determiner(test_item.obj.__doc__, self.config.delimiter)
-                        or test_item.originalname
-                        or test_item.name,
+                        determiner(test_item.obj.__doc__, self.config.delimiter) or test_item.name,
                         False
                     ))
                     traverse(test_item.parent)
@@ -91,7 +99,7 @@ class InformativeNode:
 
                 elif t is Module:
                     parts.append((
-                        determiner(test_item.obj.__doc__, self.config.delimiter) or test_item.name,
+                        determiner(test_item.obj.__doc__, self.config.delimiter) or test_item.fspath.purebasename,
                         True
                     ))
                     package_traverse(test_item)
@@ -100,6 +108,7 @@ class InformativeNode:
         file_parts = '/'.join(reversed([validator(name) for name, is_file in parts if is_file]))
         object_parts = '::'.join(reversed([validator(name) for name, is_file in parts if not is_file]))
         node_id = '::'.join([file_parts, object_parts])
+
         params = getattr(item, '_genid', None)
         if params:
             node_id = f"{node_id}[{validator(encoder(params))}]"
