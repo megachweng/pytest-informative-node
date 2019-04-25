@@ -51,6 +51,14 @@ def validator(node_id: str):
     return node_id.replace('::', '_')
 
 
+def get_params(node_name: str):
+    groups = re.search(r'(.+)\[(.+)\]', node_name)
+    try:
+        return groups.groups()
+    except AttributeError:
+        return None, None
+
+
 def encoder(escaped: str):
     return escaped.encode().decode('unicode-escape')
 
@@ -109,7 +117,7 @@ class InformativeNode:
         object_parts = '::'.join(reversed([validator(name) for name, is_file in parts if not is_file]))
         node_id = '::'.join([file_parts, object_parts])
 
-        params = getattr(item, '_genid', None)
+        _, params = get_params(item.name)
         if params:
             node_id = f"{node_id}[{validator(encoder(params))}]"
         item._nodeid = node_id
